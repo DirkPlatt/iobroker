@@ -1,11 +1,10 @@
 FROM alpine:latest
-RUN apk add nodejs nodejs-npm
+RUN apk add --no-cache bash python build-base nodejs nodejs-npm
 RUN npm install -g npm@4
-WORKDIR /
-RUN mkdir opt
-WORKDIR /opt
-RUN mkdir iobroker
-RUN chmod +x iobroker
+RUN mkdir -p /opt/iobroker
 WORKDIR /opt/iobroker
-RUN npm install iobroker --unsafe-perm
-RUN ./iobroker start
+RUN npm install iobroker --unsafe-perm && echo $(hostname) > .install_host
+ADD scripts/run.sh run.sh
+VOLUME /opt/iobroker
+EXPOSE 8081
+CMD /opt/iobroker/run.sh
